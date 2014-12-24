@@ -8,7 +8,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 package org.jenkins.plugins.lockableresources.queue;
 
-import hudson.matrix.MatrixConfiguration;
+//import hudson.matrix.MatrixConfiguration;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Queue;
@@ -20,10 +20,10 @@ public class Utils {
 	public static AbstractProject<?, ?> getProject(Queue.Item item) {
 		if (item.task instanceof AbstractProject) {
 			AbstractProject<?, ?> proj = (AbstractProject<?, ?>) item.task;
-			if (proj instanceof MatrixConfiguration) {
-				proj = (AbstractProject<?, ?>) ((MatrixConfiguration) proj)
-						.getParent();
-			}
+//			if (proj instanceof MatrixConfiguration) {
+//				proj = (AbstractProject<?, ?>) ((MatrixConfiguration) proj)
+//						.getParent();
+//			}
 			return proj;
 		}
 		return null;
@@ -33,10 +33,10 @@ public class Utils {
 		Object p = build.getParent();
 		if (p instanceof AbstractProject) {
 			AbstractProject<?, ?> proj = (AbstractProject<?, ?>) p;
-			if (proj instanceof MatrixConfiguration) {
-				proj = (AbstractProject<?, ?>) ((MatrixConfiguration) proj)
-						.getParent();
-			}
+//			if (proj instanceof MatrixConfiguration) {
+//				proj = (AbstractProject<?, ?>) ((MatrixConfiguration) proj)
+//						.getParent();
+//			}
 			return proj;
 		}
 		return null;

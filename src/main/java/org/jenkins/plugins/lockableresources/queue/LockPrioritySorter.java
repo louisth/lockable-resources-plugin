@@ -43,7 +43,7 @@ public class LockPrioritySorter extends QueueSorter {
 					.getPriorityParameterName();
 			int defaultPriority = LockableResourcesManager.get()
 					.getDefaultPriority();
-			for (Action action : item.getActions()) {
+			for (Action action : item.getAllActions()) {
 				if (action instanceof ParametersAction) {
 					ParametersAction pa = (ParametersAction) action;
 					for (ParameterValue p : pa.getParameters()) {

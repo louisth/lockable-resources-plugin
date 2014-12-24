@@ -160,7 +160,7 @@ public class LockableResourcesManager extends GlobalConfiguration {
 	public synchronized boolean reserve(List<LockableResource> resources,
 			String userName) {
 		for (LockableResource r : resources) {
-			if (r.isReserved() || r.isLocked() || r.isQueued()) {
+			if (r.isReserved()) {
 				return false;
 			}
 		}

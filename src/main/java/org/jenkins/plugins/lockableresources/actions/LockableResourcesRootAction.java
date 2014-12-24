@@ -44,7 +44,7 @@ public class LockableResourcesRootAction implements RootAction {
 			Messages._ReservePermission_Description(), Jenkins.ADMINISTER,
 			PermissionScope.JENKINS);
 
-	public static final String ICON = "/plugin/lockable-resources/img/device-24x24.png";
+	public static final String ICON = "/plugin/lockable-resources/img/lock-server-24x24.png";
 
 	public String getIconFileName() {
 		if (User.current() != null) {
