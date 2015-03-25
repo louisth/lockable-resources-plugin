@@ -25,17 +25,49 @@
                     </tr>
                     <j:forEach var="resource" items="${it.resources}" indexVar="i">
                         <script>
+                        function get_reservation_message(id) {
+                            var reservation_textbox = document.getElementById("reservation_message_" + id);
+                            var reservationMessage = "";
+                            if (reservation_textbox) {
+                                reservationMessage = reservation_textbox.value;
+                            }
+                            return encodeURIComponent(reservationMessage);
+                        }
+                        function get_reservation_message_if_modified(id) {
+                            var reservation_textbox = document.getElementById("reservation_message_" + id);
+                            if (reservation_textbox.wasTouched) {
+                                return get_reservation_message(id);
+                            }
+                            return "";
+                        }
                         function unlock_resource_${i}() {
                             window.location.assign("unlock?resource=${resource.name}");
                         }
                         function reserve_resource_${i}() {
-                            window.location.assign("reserve?resource=${resource.name}");
+                            window.location.assign("reserve?resource=${resource.name}&amp;reservationMessage="
+                                + get_reservation_message_if_modified(${i}));
+                        }
+                        function update_reservation_on_resource_${i}() {
+                            window.location.assign("update?resource=${resource.name}&amp;reservationMessage="
+                                + get_reservation_message(${i}));
+                        }
+                        function take_reservation_on_resource_${i}() {
+                            window.location.assign("take?resource=${resource.name}&amp;reservationMessage="
+                                + get_reservation_message_if_modified(${i}));
                         }
                         function unreserve_resource_${i}() {
                             window.location.assign("unreserve?resource=${resource.name}");
                         }
                         function reset_resource_${i}() {
                             window.location.assign("reset?resource=${resource.name}");
+                        }
+                        function update_reservation_message(id) {
+                            var reservation_textbox = document.getElementById("reservation_message_" + id)
+                            if (!reservation_textbox.wasTouched) {
+                                reservation_textbox.value = "";
+                                reservation_textbox.style = "";
+                                reservation_textbox.wasTouched = true;
+                            }
                         }
                         </script>
                         <tr>
@@ -56,6 +88,7 @@
                                 <j:if test="${resource.reservedBy != null}">
                                     <div style="color: red;">
                                         <strong>RESERVED</strong> by <strong>${resource.reservedBy}</strong>
+                                        <br>${resource.reservationMessage}</br>
                                     </div>
                                 </j:if>
                                 <j:if test="${resource.queued}">
@@ -74,14 +107,23 @@
                                 <j:if test="${resource.locked and h.hasPermission(it.UNLOCK)}">
                                     <button onClick="unlock_resource_${i}();">Unlock</button>
                                 </j:if>
-                                <j:if test="${resource.reservedBy == null and h.hasPermission(it.RESERVE) and it.UserName != null}">
-                                    <button onClick="reserve_resource_${i}();">Reserve</button>
-                                </j:if>
-                                <j:if test="${resource.reservedBy != null and h.hasPermission(it.RESERVE) and (it.UserName == resource.reservedBy or h.hasPermission(app.ADMINISTER))}">
-                                    <button onClick="unreserve_resource_${i}();">UnReserve</button>
+                                <j:if test="${h.hasPermission(it.RESERVE) and it.UserName != null}">
+                                    <j:if test="${resource.reservedBy == null}">
+                                        <button onClick="reserve_resource_${i}();">Reserve</button>
+                                        <input type="text" style="color:gray" id="reservation_message_${i}" value="Reservation Message" onfocus="update_reservation_message(${i});"/>
+                                    </j:if>
+                                    <j:if test="${resource.reservedBy != null and it.UserName == resource.reservedBy}">
+                                        <button onClick="unreserve_resource_${i}();">Unreserve</button>
+                                        <button onClick="update_reservation_on_resource_${i}();">Update Message</button>
+                                        <input type="text" id="reservation_message_${i}" value="${resource.reservationMessage}"/>
+                                    </j:if>
+                                    <j:if test="${resource.reservedBy != null and it.UserName != resource.reservedBy}">
+                                        <button onClick="take_reservation_on_resource_${i}();">Take Reservation</button>
+                                        <input type="text" style="color:gray" id="reservation_message_${i}" value="Reservation Message" onfocus="update_reservation_message(${i});"/>
+                                    </j:if>
                                 </j:if>
                                 <j:if test="${resource.queued and h.hasPermission(it.UNLOCK)}">
-                                    <button onClick="reset_resource_${i}();">ResetResource</button>
+                                    <button onClick="reset_resource_${i}();">Reset Resource</button>
                                 </j:if>
                             </td>
                         </tr>

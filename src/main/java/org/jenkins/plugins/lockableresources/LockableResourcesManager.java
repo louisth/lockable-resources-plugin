@@ -158,7 +158,7 @@ public class LockableResourcesManager extends GlobalConfiguration {
 	}
 
 	public synchronized boolean reserve(List<LockableResource> resources,
-			String userName) {
+			String userName, String reservationMessage) {
 		for (LockableResource r : resources) {
 			if (r.isReserved()) {
 				return false;
@@ -166,6 +166,33 @@ public class LockableResourcesManager extends GlobalConfiguration {
 		}
 		for (LockableResource r : resources) {
 			r.setReservedBy(userName);
+			r.setReservationMessage(reservationMessage);
+		}
+		save();
+		return true;
+	}
+
+	public synchronized boolean update(List<LockableResource> resources,
+			String userName, String reservationMessage) {
+		for (LockableResource r : resources) {
+			boolean reserved_by_user = r.isReserved()
+					&& userName.equals(r.getReservedBy());
+			if ( ! reserved_by_user) {
+				return false;
+			}
+		}
+		for (LockableResource r : resources) {
+			r.setReservationMessage(reservationMessage);
+		}
+		save();
+		return true;
+	}
+
+	public synchronized boolean take(List<LockableResource> resources,
+			String userName, String reservationMessage) {
+		for (LockableResource r : resources) {
+			r.setReservedBy(userName);
+			r.setReservationMessage(reservationMessage);
 		}
 		save();
 		return true;
@@ -217,5 +244,4 @@ public class LockableResourcesManager extends GlobalConfiguration {
 		return (LockableResourcesManager) Jenkins.getInstance()
 				.getDescriptorOrDie(LockableResourcesManager.class);
 	}
-
 }
