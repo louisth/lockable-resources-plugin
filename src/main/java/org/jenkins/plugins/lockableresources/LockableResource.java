@@ -27,6 +27,7 @@ public class LockableResource extends AbstractDescribableImpl<LockableResource> 
 	private final String name;
 	private final String description;
 	private String reservedBy;
+	private String reservationMessage;
 
 	private transient int queueItemId = NOT_QUEUED;
 	private transient String queueItemProject = null;
@@ -34,10 +35,11 @@ public class LockableResource extends AbstractDescribableImpl<LockableResource> 
 	private transient long queuingStarted = 0;
 
 	@DataBoundConstructor
-	public LockableResource(String name, String description, String reservedBy) {
+	public LockableResource(String name, String description, String reservedBy, String reservationMessage) {
 		this.name = name;
 		this.description = description;
 		this.reservedBy = Util.fixEmptyAndTrim(reservedBy);
+		this.reservationMessage = Util.fixEmptyAndTrim(reservationMessage);
 	}
 
 	public String getName() {
@@ -52,7 +54,11 @@ public class LockableResource extends AbstractDescribableImpl<LockableResource> 
 		return reservedBy;
 	}
 
-	public boolean isReserved() {
+	public String getReservationMessage() {
+		return reservationMessage;
+	}
+
+    public boolean isReserved() {
 		return reservedBy != null;
 	}
 
@@ -131,8 +137,13 @@ public class LockableResource extends AbstractDescribableImpl<LockableResource> 
 		this.reservedBy = userName;
 	}
 
+    public void setReservationMessage(String reservationMessage) {
+        this.reservationMessage = reservationMessage;
+    }
+
 	public void unReserve() {
-		this.reservedBy = null;
+		this.setReservedBy(null);
+		this.setReservationMessage(null);
 	}
 
 	public void reset() {

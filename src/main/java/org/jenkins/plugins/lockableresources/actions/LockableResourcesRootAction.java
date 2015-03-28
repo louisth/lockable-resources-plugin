@@ -107,12 +107,55 @@ public class LockableResourcesRootAction implements RootAction {
 		resources.add(r);
 		String userName = getUserName();
 		if (userName != null)
-			LockableResourcesManager.get().reserve(resources, userName);
+			LockableResourcesManager.get().reserve(resources, userName,
+                    req.getParameter("reservationMessage"));
 
 		rsp.forwardToPreviousPage(req);
 	}
 
-	public void doUnreserve(StaplerRequest req, StaplerResponse rsp)
+    public void doUpdate(StaplerRequest req, StaplerResponse rsp)
+            throws IOException, ServletException {
+        Jenkins.getInstance().checkPermission(RESERVE);
+
+        String name = req.getParameter("resource");
+        LockableResource r = LockableResourcesManager.get().fromName(name);
+        if (r == null) {
+            rsp.sendError(404, "Resource not found " + name);
+            return;
+        }
+
+        List<LockableResource> resources = new ArrayList<LockableResource>();
+        resources.add(r);
+        String userName = getUserName();
+        if (userName != null)
+            LockableResourcesManager.get().update(resources, userName,
+                    req.getParameter("reservationMessage"));
+
+        rsp.forwardToPreviousPage(req);
+    }
+
+    public void doTake(StaplerRequest req, StaplerResponse rsp)
+            throws IOException, ServletException {
+        Jenkins.getInstance().checkPermission(RESERVE);
+
+        String name = req.getParameter("resource");
+        LockableResource r = LockableResourcesManager.get().fromName(name);
+        if (r == null) {
+            rsp.sendError(404, "Resource not found " + name);
+            return;
+        }
+
+        List<LockableResource> resources = new ArrayList<LockableResource>();
+        resources.add(r);
+        String userName = getUserName();
+        if (userName != null)
+            LockableResourcesManager.get().take(resources, userName,
+                    req.getParameter("reservationMessage"));
+
+        rsp.forwardToPreviousPage(req);
+    }
+
+    public void doUnreserve(StaplerRequest req, StaplerResponse rsp)
 		throws IOException, ServletException {
 		Jenkins.getInstance().checkPermission(RESERVE);
 
